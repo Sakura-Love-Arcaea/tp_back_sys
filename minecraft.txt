@@ -1,0 +1,23 @@
+計數器,賦予唯一傳送id
+{
+    /scoreboard players add .counter tp_id 1
+    /scoreboard players operation @e[type=minecraft:armor_stand,tag=xxx] tp_id = .counter tp_id
+    /scoreboard players operation @a[tag=xxx] tp_id = .counter tp_id
+    /tag @e remove xxx
+}
+執行(刪除已有同id的盔甲，聲稱一個有臨時tag的
+{
+    /scoreboard players enable @a tp
+    /execute as @e[type=!minecraft:player] if score @s tp_id = @a[scores={tp=1..},sort=nearest,limit=1] tp_id run kill
+    /execute at @a[scores={tp=1..}] run summon minecraft:armor_stand ~ ~ ~ {Tags:["xxx"],NoGravity:1}
+    /tp @a[scores={tp=1..}] 0 -60 0
+    /scoreboard players enable @a[scores={tp=1..}] back
+    /tag @a[scores={tp=1..}] add xxx
+    /scoreboard players set @a[scores={tp=1..}] tp 0
+}
+back
+{
+    /execute as @a[scores={back=1..}] at @s as @e if score @s tp_id = @a[scores={back=1..},sort=nearest,limit=1] tp_id run tp @a[scores={back=1..}] @s
+    /execute as @e[type=!minecraft:player] if score @s tp_id = @a[scores={back=1..},sort=nearest,limit=1] tp_id run kill
+    /scoreboard players set @a[scores={back=1..}] back 0
+}
